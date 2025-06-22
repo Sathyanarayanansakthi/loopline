@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <div className="bg-white text-blue-700 px-10 py-3 shadow">
+    <div className="bg-white text-blue-700 px-10 py-3 shadow border-b border-gray-200">
       <div className="flex justify-between items-center">
 
-        {/* Logo */}
         <Link to="/">
           <h2 className="font-bold text-2xl cursor-pointer">LoopLine</h2>
         </Link>
@@ -26,7 +25,7 @@ const Navbar = () => {
 
         {/* Auth Buttons */}
         <div className="flex gap-4">
-          <Link to="/signup">
+          <Link to="/signin">
             <button className="bg-blue-600 text-white rounded-2xl px-6 py-2 hover:bg-blue-700 transition duration-300">
               Signup
             </button>
