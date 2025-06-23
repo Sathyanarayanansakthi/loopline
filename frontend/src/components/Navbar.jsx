@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <div className="bg-white text-blue-700 px-10 py-3 shadow border-b border-gray-200">
+    <div className="bg-white text-blue-700 px-40 py-6 shadow border-b border-gray-300 ">
       <div className="flex justify-between items-center">
 
         <Link to="/">
-          <h2 className="font-bold text-2xl cursor-pointer">LoopLine</h2>
+          <h2 className="font-bold text-2xl ">LoopLine</h2>
         </Link>
 
         {/* Navigation Links */}

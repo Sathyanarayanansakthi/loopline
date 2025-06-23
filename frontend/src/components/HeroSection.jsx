@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = () => {
   return (
-    <div className="bg-[#f9fafb] min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20">
+    <div className="bg-[#f9fafb] min-h-screen flex items-center justify-center px-4 sm:px-6 lg:px-8 py-12 sm:py-20 border-b border-gray-300">
       <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
         
         {/* Left Content */}
@@ -18,7 +18,7 @@ const HeroSection = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-4">
             <button className="bg-blue-700 text-white px-6 py-3 rounded-full font-semibold hover:bg-blue-800 transition shadow-lg w-full sm:w-auto">
-              Try EchoBoard Free
+              Try LoopLine Free
             </button>
             <button className="bg-white text-blue-700 px-6 py-3 rounded-full font-semibold border border-blue-200 hover:bg-blue-50 transition shadow w-full sm:w-auto">
               See How It Works

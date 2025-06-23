@@ -1,51 +1,106 @@
-import React from 'react';
+import React, { useState } from "react";
+import axios from "../api/axios";
+import { useNavigate } from "react-router-dom";
 
-const Signinpage = () => {
+const SigninPage = () => {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "employee",
+    manager_email: "",
+  });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      ...form,
+      manager_email: form.manager_email.trim() === "" ? null : form.manager_email,
+    };
+
+    try {
+      await axios.post("/auth/register", payload);
+      alert("Registered successfully!");
+      navigate("/login");
+    } catch (error) {
+      alert(error.response?.data?.detail || "Registration failed");
+    }
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200">
-      <div className="w-full bg-white p-8 max-w-md rounded-3xl shadow-lg">
-        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-        <form className="space-y-6">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-blue-600 px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6 animate-fade-in"
+      >
+        <h2 className="text-3xl font-bold text-center text-indigo-700">Create Account</h2>
 
-          {/* Name Field */}
-          <div className="relative">
-            <input
-              type="text"
-              id="name"
-              name="name"
-              required
-              className="peer w-full px-4 pt-6 pb-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-transparent"
-              placeholder="Your Name"
-            />
-            <label
-              htmlFor="name"
-              className="absolute left-4 top-2 text-sm text-gray-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600"
-            >
-              Name
-            </label>
-          </div>
+        <input
+          id="username"
+          value={form.username}
+          onChange={handleChange}
+          placeholder="Username"
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
 
-          <div className="relative">
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="peer w-full px-4 pt-6 pb-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-transparent"
-              placeholder="you@example.com"
-            />
-            <label
-              htmlFor="email"
-              className="absolute left-4 top-2 text-sm text-gray-500 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-2 peer-focus:text-sm peer-focus:text-indigo-600"
-            >
-              Email
-            </label>
-          </div>
+        <input
+          id="email"
+          type="email"
+          value={form.email}
+          onChange={handleChange}
+          placeholder="Email"
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
 
-        </form>
-      </div>
+        <input
+          id="password"
+          type="password"
+          value={form.password}
+          onChange={handleChange}
+          placeholder="Password"
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <select
+          id="role"
+          value={form.role}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          <option value="employee">Employee</option>
+          <option value="manager">Manager</option>
+        </select>
+
+        <input
+          id="manager_email"
+          type="email"
+          value={form.manager_email}
+          onChange={handleChange}
+          placeholder="Manager Email (optional)"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-lg transition duration-300"
+        >
+          Sign Up
+        </button>
+      </form>
     </div>
   );
 };
 
-export default Signinpage;
+export default SigninPage;
