@@ -10,12 +10,15 @@ from database import Base, engine, get_db
 from models.models import User
 from auth import router as auth_router
 
+# Load environment variables
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
+# Initialize app
 app = FastAPI()
 
+# Enable CORS for frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -24,22 +27,38 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Create database tables
 Base.metadata.create_all(bind=engine)
+
+# Include auth routes
 app.include_router(auth_router, prefix="/auth")
+
+# OAuth2 token scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
+# Manager-only endpoint to fetch their team members
 @app.get("/team")
 def get_team(current_token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     try:
+        # Decode JWT
         payload = jwt.decode(current_token, SECRET_KEY, algorithms=[ALGORITHM])
         role = payload.get("role")
-        user_id = payload.get("id")
+        email = payload.get("sub")  # sub = email (we're using it as unique identifier)
 
         if role != "manager":
             raise HTTPException(status_code=403, detail="Only managers can view their team")
 
-        team = db.query(User).filter(User.manager_email == payload.get("sub")).all()
-        return [{"id": u.id, "username": u.username, "email": u.email} for u in team]
+        # Query users who have this manager_email
+        team = db.query(User).filter(User.manager_email == email).all()
+
+        return [
+            {
+                "id": u.id,
+                "username": u.username,
+                "email": u.email
+            }
+            for u in team
+        ]
 
     except JWTError:
         raise HTTPException(status_code=403, detail="Invalid token")

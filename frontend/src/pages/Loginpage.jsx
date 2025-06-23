@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -15,10 +16,10 @@ const LoginPage = () => {
     try {
       const res = await axios.post("/auth/login", form);
       localStorage.setItem("token", res.data.access_token);
-      alert("Login successful");
+      toast.success("Login successful!");
       navigate("/dashboard");
     } catch (err) {
-      alert("Invalid credentials");
+      toast.error("Invalid credentials");
     }
   };
 
