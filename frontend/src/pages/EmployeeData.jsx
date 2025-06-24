@@ -36,34 +36,32 @@ const EmployeeData = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg p-6">
         <h2 className="text-2xl font-bold text-center text-indigo-700 mb-6">
-          Employee Data
+          Team Members
         </h2>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200 border border-gray-300 rounded-lg">
             <thead className="bg-indigo-600 text-white">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  ID
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  Username
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold uppercase tracking-wider">
-                  Email
-                </th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">ID</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Username</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Email</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Role</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold uppercase">Manager Email</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200 text-gray-700">
               {employees.map((emp) => (
                 <tr key={emp.id}>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.username}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.email}</td>
+                  <td className="px-4 py-2">{emp.id}</td>
+                  <td className="px-4 py-2">{emp.username}</td>
+                  <td className="px-4 py-2">{emp.email}</td>
+                  <td className="px-4 py-2 capitalize">{emp.role}</td>
+                  <td className="px-4 py-2">{emp.manager_email || "N/A"}</td>
                 </tr>
               ))}
               {employees.length === 0 && (
                 <tr>
-                  <td colSpan="3" className="text-center py-4">
+                  <td colSpan="5" className="text-center py-4">
                     No employees found.
                   </td>
                 </tr>

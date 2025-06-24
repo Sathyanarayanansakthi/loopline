@@ -26,7 +26,6 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
 def submit_feedback(data: FeedbackCreate, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if user["role"] != "manager":
         raise HTTPException(status_code=403, detail="Only managers can submit feedback.")
-
     feedback = Feedback(
         manager_email=user["email"],
         employee_email=data.employee_email,
@@ -41,13 +40,14 @@ def submit_feedback(data: FeedbackCreate, db: Session = Depends(get_db), user: d
 
 @router.get("/received", response_model=list[FeedbackOut])
 def get_received_feedback(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    if user["role"] != "employee":
+        raise HTTPException(status_code=403, detail="Only employees can view their feedback.")
     return db.query(Feedback).filter(Feedback.employee_email == user["email"]).order_by(Feedback.timestamp.desc()).all()
 
 @router.get("/team", response_model=list[FeedbackOut])
 def get_team_feedback(db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     if user["role"] != "manager":
         raise HTTPException(status_code=403, detail="Only managers can view team feedback.")
-    
     return db.query(Feedback).filter(Feedback.manager_email == user["email"]).order_by(Feedback.timestamp.desc()).all()
 
 @router.put("/{feedback_id}", response_model=FeedbackOut)
@@ -55,7 +55,6 @@ def update_feedback(feedback_id: int, update_data: FeedbackUpdate, db: Session =
     feedback = db.query(Feedback).filter_by(id=feedback_id, manager_email=user["email"]).first()
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback not found or unauthorized")
-
     feedback.strengths = update_data.strengths
     feedback.improvements = update_data.improvements
     feedback.sentiment = update_data.sentiment
@@ -68,7 +67,6 @@ def acknowledge_feedback(feedback_id: int, db: Session = Depends(get_db), user: 
     feedback = db.query(Feedback).filter_by(id=feedback_id, employee_email=user["email"]).first()
     if not feedback:
         raise HTTPException(status_code=404, detail="Feedback not found or unauthorized")
-
     feedback.acknowledged = True
     db.commit()
     db.refresh(feedback)
