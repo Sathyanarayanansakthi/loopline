@@ -4,6 +4,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt, JWTError
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+from auth import router as auth_router
+from routes.feedback import router as feedback_router
 import os
 
 from database import Base, engine, get_db
@@ -15,7 +17,6 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 
-# Initialize app
 app = FastAPI()
 
 # Enable CORS for frontend
@@ -32,6 +33,7 @@ Base.metadata.create_all(bind=engine)
 
 # Include auth routes
 app.include_router(auth_router, prefix="/auth")
+app.include_router(feedback_router, prefix="/feedback") 
 
 # OAuth2 token scheme
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

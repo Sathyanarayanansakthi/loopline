@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [form, setForm] = useState({ username: "", password: "" });
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.id]: e.target.value });
+    setForm({ ...form, [e.target.name]: e.target.value }); // ✅ use name instead of id
   };
 
   const handleSubmit = async (e) => {
@@ -27,12 +27,12 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-blue-600 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6 animate-fade-in"
+        className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6"
       >
         <h2 className="text-3xl font-bold text-center text-indigo-700">Login</h2>
 
         <input
-          id="username"
+          name="username"
           value={form.username}
           onChange={handleChange}
           placeholder="Username"
@@ -41,7 +41,7 @@ const LoginPage = () => {
         />
 
         <input
-          id="password"
+          name="password"
           type="password"
           value={form.password}
           onChange={handleChange}
