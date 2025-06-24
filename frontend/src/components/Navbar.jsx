@@ -15,9 +15,6 @@ const Navbar = () => {
           <Link to="/about">
             <h2 className="cursor-pointer hover:text-blue-600">About</h2>
           </Link>
-          <Link to="/features">
-            <h2 className="cursor-pointer hover:text-blue-600">Features</h2>
-          </Link>
           <Link to="/tech">
             <h2 className="cursor-pointer hover:text-blue-600">Technology Used</h2>
           </Link>

@@ -6,12 +6,14 @@ import Signinpage from './pages/Signinpage';
 import Dashboard from './pages/Dashboard';
 import EmployeeData from './pages/EmployeeData';
 import AddTeam from './pages/AddTeam';
+import Technology from './components/Technology';
 
 const App = () => {
   return (
     <BrowserRouter>
-            <Routes>
+      <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/tech"element={<Technology/>}/>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signin" element={<Signinpage />} />
         <Route path="/dashboard" element={<Dashboard />} />

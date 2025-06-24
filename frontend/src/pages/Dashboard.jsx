@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "../api/axios";
 import FeedbackHistory from "../components/FeedbackHistory";
 import SubmitFeedback from "../components/SubmitFeedback";
+import { FaUserPlus, FaUsers, FaCommentDots, FaUserTie } from "react-icons/fa";
 
 const Dashboard = () => {
   const [role, setRole] = useState("");
@@ -14,7 +15,6 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("Please login first");
       navigate("/login");
       return;
     }
@@ -24,7 +24,6 @@ const Dashboard = () => {
       setRole(decoded.role);
     } catch (err) {
       console.error("Invalid token", err);
-      alert("Invalid token, please login again");
       localStorage.removeItem("token");
       navigate("/login");
     }
@@ -42,7 +41,6 @@ const Dashboard = () => {
         setTeam(res.data);
       } catch (err) {
         console.error("Failed to fetch team", err);
-        alert("Could not fetch employee data");
       }
     };
 
@@ -52,88 +50,100 @@ const Dashboard = () => {
   }, [selectedTab]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`w-64 ${role === "manager" ? "bg-indigo-700" : "bg-blue-600"} text-white p-6 space-y-6`}>
-        <h2 className="text-xl font-bold border-b pb-2">
-          {role === "manager" ? "Manager Panel" : "Employee Panel"}
-        </h2>
-        <ul className="space-y-4">
+      <aside className={`w-72 p-6 shadow-md ${role === "manager" ? "bg-gradient-to-b from-indigo-800 to-indigo-600" : "bg-gradient-to-b from-blue-700 to-blue-500"} text-white`}>
+        <h2 className="text-2xl font-bold mb-6">{role === "manager" ? "Manager Panel" : "Employee Panel"}</h2>
+        <nav className="space-y-3">
           {role === "manager" && (
             <>
-              <li className={`cursor-pointer hover:text-indigo-300 ${selectedTab === "employeeData" ? "font-semibold text-indigo-300" : ""}`} onClick={() => setSelectedTab("employeeData")}>Employee Data</li>
-              <li className={`cursor-pointer hover:text-indigo-300 ${selectedTab === "employeeDetails" ? "font-semibold text-indigo-300" : ""}`} onClick={() => setSelectedTab("employeeDetails")}>Employee Details</li>
-              <li className={`cursor-pointer hover:text-indigo-300 ${selectedTab === "addTeamMember" ? "font-semibold text-indigo-300" : ""}`} onClick={() => setSelectedTab("addTeamMember")}>Add Team Member</li>
-              <li className={`cursor-pointer hover:text-indigo-300 ${selectedTab === "feedback" ? "font-semibold text-indigo-300" : ""}`} onClick={() => setSelectedTab("feedback")}>Submit Feedback</li>
+              <SidebarItem icon={<FaUsers />} label="Employee Data" active={selectedTab === "employeeData"} onClick={() => setSelectedTab("employeeData")} />
+              <SidebarItem icon={<FaUserTie />} label="Employee Details" active={selectedTab === "employeeDetails"} onClick={() => setSelectedTab("employeeDetails")} />
+              <SidebarItem icon={<FaUserPlus />} label="Add Team Member" active={selectedTab === "addTeamMember"} onClick={() => setSelectedTab("addTeamMember")} />
+              <SidebarItem icon={<FaCommentDots />} label="Submit Feedback" active={selectedTab === "feedback"} onClick={() => setSelectedTab("feedback")} />
             </>
           )}
           {role === "employee" && (
-            <li className={`cursor-pointer hover:text-blue-300 ${selectedTab === "feedback" ? "font-semibold text-blue-300" : ""}`} onClick={() => setSelectedTab("feedback")}>Feedback Received</li>
+            <SidebarItem icon={<FaCommentDots />} label="Feedback Received" active={selectedTab === "feedback"} onClick={() => setSelectedTab("feedback")} />
           )}
-        </ul>
-      </div>
+        </nav>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col p-10 bg-gray-100">
-        <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-5xl mx-auto">
-          <h1 className="text-3xl font-bold text-center text-indigo-700 mb-6">Welcome to the Dashboard</h1>
-
-          {role === "manager" && !selectedTab && <p className="text-green-600 text-center font-medium">Manager has logged in</p>}
-          {role === "employee" && !selectedTab && <p className="text-blue-600 text-center font-medium">Employee has logged in</p>}
+      <main className="flex-1 p-10">
+        <div className="bg-white rounded-xl shadow-lg p-10 max-w-6xl mx-auto">
+          <h1 className="text-4xl font-bold text-center text-indigo-700 mb-8">Welcome to the Dashboard</h1>
+          {!selectedTab && (
+            <p className={`text-center text-lg ${role === "manager" ? "text-green-600" : "text-blue-600"}`}>
+              {role === "manager" ? "Manager has logged in" : "Employee has logged in"}
+            </p>
+          )}
 
           {selectedTab === "employeeData" && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Employee Data</h2>
+            <Section title="Employee Data">
               <TeamTable team={team} />
-            </div>
+            </Section>
           )}
 
           {selectedTab === "employeeDetails" && (
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Employee Details</h2>
+            <Section title="Employee Details">
               <TeamTable team={team} showManager />
-            </div>
+            </Section>
           )}
 
           {selectedTab === "addTeamMember" && (
-            <AddEmployeeForm setSelectedTab={setSelectedTab} />
+            <Section title="Add Employee">
+              <AddEmployeeForm setSelectedTab={setSelectedTab} />
+            </Section>
           )}
 
           {selectedTab === "feedback" && role === "manager" && <SubmitFeedback />}
           {selectedTab === "feedback" && role === "employee" && <FeedbackHistory />}
         </div>
-      </div>
+      </main>
     </div>
   );
 };
 
+const SidebarItem = ({ icon, label, active, onClick }) => (
+  <div
+    className={`flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition hover:bg-white hover:text-indigo-700 ${active ? "bg-white text-indigo-700 font-semibold" : "text-white"}`}
+    onClick={onClick}
+  >
+    {icon} <span>{label}</span>
+  </div>
+);
+
+const Section = ({ title, children }) => (
+  <div className="space-y-4">
+    <h2 className="text-2xl font-semibold text-gray-800 mb-2">{title}</h2>
+    {children}
+  </div>
+);
+
 const TeamTable = ({ team, showManager = false }) => (
-  <>
-    {team.length === 0 ? (
-      <p>No employees found.</p>
-    ) : (
-      <table className="w-full table-auto border">
-        <thead>
-          <tr className="bg-indigo-100">
-            <th className="border px-4 py-2">ID</th>
-            <th className="border px-4 py-2">Username</th>
-            <th className="border px-4 py-2">Email</th>
-            {showManager && <th className="border px-4 py-2">Manager Email</th>}
+  <div className="overflow-x-auto rounded-lg shadow">
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-indigo-600 text-white">
+        <tr>
+          <th className="px-6 py-3 text-left text-sm font-semibold">ID</th>
+          <th className="px-6 py-3 text-left text-sm font-semibold">Username</th>
+          <th className="px-6 py-3 text-left text-sm font-semibold">Email</th>
+          {showManager && <th className="px-6 py-3 text-left text-sm font-semibold">Manager Email</th>}
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-100">
+        {team.map(emp => (
+          <tr key={emp.id} className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm">{emp.id}</td>
+            <td className="px-6 py-4 text-sm">{emp.username}</td>
+            <td className="px-6 py-4 text-sm">{emp.email}</td>
+            {showManager && <td className="px-6 py-4 text-sm">{emp.manager_email || "N/A"}</td>}
           </tr>
-        </thead>
-        <tbody>
-          {team.map((emp) => (
-            <tr key={emp.id}>
-              <td className="border px-4 py-2">{emp.id}</td>
-              <td className="border px-4 py-2">{emp.username}</td>
-              <td className="border px-4 py-2">{emp.email}</td>
-              {showManager && <td className="border px-4 py-2">{emp.manager_email || "N/A"}</td>}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    )}
-  </>
+        ))}
+      </tbody>
+    </table>
+  </div>
 );
 
 const AddEmployeeForm = ({ setSelectedTab }) => {
@@ -150,20 +160,28 @@ const AddEmployeeForm = ({ setSelectedTab }) => {
         manager_email: decoded.sub,
       };
       await axios.post("/auth/register", payload);
-      alert("Employee added!");
       e.target.reset();
       setSelectedTab("employeeData");
     } catch (err) {
-      alert("Failed to add employee");
+      console.error("Add Employee Error:", err);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input name="username" required placeholder="Username" className="w-full border px-4 py-2 rounded" />
-      <input name="email" type="email" required placeholder="Email" className="w-full border px-4 py-2 rounded" />
-      <input name="password" type="password" required placeholder="Password" className="w-full border px-4 py-2 rounded" />
-      <button type="submit" className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">Add Employee</button>
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-xl mx-auto">
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Username</label>
+        <input name="username" required className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Email</label>
+        <input name="email" type="email" required className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Password</label>
+        <input name="password" type="password" required className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+      <button type="submit" className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition">Add Employee</button>
     </form>
   );
 };
