@@ -14,6 +14,7 @@ const SubmitFeedback = () => {
   });
 
   const token = localStorage.getItem("token");
+  // eslint-disable-next-line no-unused-vars
   const decoded = jwtDecode(token);
 
   useEffect(() => {
@@ -57,7 +58,6 @@ const SubmitFeedback = () => {
     doc.text(`Strengths: ${form.strengths}`, 10, 30);
     doc.text(`Improvements: ${form.improvements}`, 10, 40);
     doc.text(`Sentiment: ${form.sentiment}`, 10, 50);
-    doc.text(`Tags: ${form.tags}`, 10, 60);
     doc.save("feedback.pdf");
   };
 
@@ -115,17 +115,6 @@ const SubmitFeedback = () => {
             <option value="neutral">Neutral</option>
             <option value="negative">Negative</option>
           </select>
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1 text-gray-700">Tags</label>
-          <input
-            type="text"
-            placeholder="Tags (comma separated, e.g., teamwork, punctuality)"
-            className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring focus:ring-indigo-300"
-            value={form.tags}
-            onChange={(e) => setForm({ ...form, tags: e.target.value })}
-          />
         </div>
 
         <div className="flex gap-4">
